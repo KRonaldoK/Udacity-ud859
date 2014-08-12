@@ -1,3 +1,4 @@
+#Java Files
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -14,6 +15,8 @@ hs_err_pid*
 # Eclipse Files
 *.pydevproject
 .metadata
+target/
+build/
 .gradle
 bin/
 tmp/
@@ -42,3 +45,16 @@ local.properties
 
 # TeXlipse plugin
 .texlipse
+
+# Others
+datanucleus.log
+.DS_Store
+_DS_Store
+out
+*.iml
+*.ipr
+*.iws
+.idea
+.settings
+.classpath
+.project
