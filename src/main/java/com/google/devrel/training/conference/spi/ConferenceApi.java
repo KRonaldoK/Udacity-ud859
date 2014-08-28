@@ -16,10 +16,13 @@ import com.googlecode.objectify.Key;
 /**
  * Defines conference APIs.
  */
-@Api(name = "conference", version = "v1", scopes = { Constants.EMAIL_SCOPE }, clientIds = {
-        Constants.WEB_CLIENT_ID, Constants.API_EXPLORER_CLIENT_ID }, description = "API for the Conference Central Backend application.")
-public class ConferenceApi {
+@Api(name = "conference", version = "v1", scopes = { Constants.EMAIL_SCOPE },
+	clientIds = {
+		Constants.WEB_CLIENT_ID, 
+		Constants.API_EXPLORER_CLIENT_ID }, 
+	description = "API for the Conference Central Backend application.")
 
+public class ConferenceApi {
     /*
      * Get the display name from the user's email. For example, if the email is
      * lemoncake@example.com, then the display name becomes "lemoncake."
@@ -48,43 +51,43 @@ public class ConferenceApi {
 
     public Profile saveProfile(final User user, ProfileForm profileForm) throws UnauthorizedException {
 
-        String userId = null;
-        String mainEmail = null;
-        String displayName = "Your name will go here";
-        TeeShirtSize teeShirtSize = TeeShirtSize.NOT_SPECIFIED;
-
-        // If the user is not logged in, throw an UnauthorizedException
+    	// If the user is not logged in, throw an UnauthorizedException
         if(user == null) {
         	throw new UnauthorizedException("Authorization required!");
         }
         
-        // Set the teeShirtSize to the value sent by the ProfileForm, if sent
-        // otherwise leave it as the default value
-        if(profileForm.getTeeShirtSize() != null) {
-        	teeShirtSize = profileForm.getTeeShirtSize();
-        }
-        
-        // Set the displayName to the value sent by the ProfileForm, if sent
-        // otherwise set it to null
-        displayName = profileForm.getDisplayName();
-        
         // Get the userId and mainEmail
-        mainEmail = user.getEmail();
-        userId = user.getUserId();
+        String mainEmail = user.getEmail();
+        String userId = user.getUserId();
         
-        // If the displayName is null, set it to default value based on the user's email
-        // by calling extractDefaultDisplayNameFromEmail(...)
-        if(displayName == null) {
-        	displayName = extractDefaultDisplayNameFromEmail(mainEmail);
+        // Get the displayName and teeShirtSize sent by the request
+        String displayName = profileForm.getDisplayName();
+        TeeShirtSize teeShirtSize = profileForm.getTeeShirtSize();
+        
+        // Get the Profile from the datastore if it exists
+        // otherwise create a new one
+        Profile profile = ofy().load().key(Key.create(Profile.class, userId)).now();
+        
+        if(profile == null) {
+        	// Populate the displayName and teeShirtSize with default values
+        	// if not sent by the request
+        	if(displayName == null) {
+            	displayName = extractDefaultDisplayNameFromEmail(user.getEmail());
+            }
+        	if(teeShirtSize == null) {
+        		teeShirtSize = TeeShirtSize.NOT_SPECIFIED;
+        	}
+        	// Now create a new Profile entity
+        	profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
+        } else {
+        	// The Profile entity already exists 
+        	// Update the Profile entity
+        	profile.update(displayName, teeShirtSize);
         }
-
-        // Create a new Profile entity from the
-        // userId, displayName, mainEmail and teeShirtSize
-        Profile profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
-
-        // TODO 3 (In Lesson 3)
+        
         // Save the Profile entity in the datastore
-
+        ofy().save().entity(profile).now();
+        
         // Return the profile
         return profile;
     }
@@ -105,11 +108,10 @@ public class ConferenceApi {
             throw new UnauthorizedException("Authorization required");
         }
 
-        // TODO
         // load the Profile Entity
-        String userId = ""; // TODO
-        Key key = null; // TODO
-        Profile profile = null; // TODO load the Profile entity
+        String userId = user.getUserId();
+        Key<Profile> key = Key.create(Profile.class, userId);
+        Profile profile = ofy().load().key(key).now();
         return profile;
     }
 }
