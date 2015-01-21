@@ -11,7 +11,7 @@
 
     <properties>
         <appengine.app.version>1</appengine.app.version>
-        <appengine.target.version>1.9.13</appengine.target.version>
+        <appengine.target.version>1.9.17</appengine.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.googlecode.objectify</groupId>
             <artifactId>objectify</artifactId>
-            <version>5.0.5</version> <!--  5.1 -->
+            <version>5.0.5</version> <!--  5.1.4 -->
         </dependency>
 
         <!-- Test Dependencies -->
@@ -69,7 +69,7 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>3.1</version>
+                <version>3.2</version>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.8</source>
@@ -130,7 +130,7 @@
         									appengine-maven-plugin
         								</artifactId>
         								<versionRange>
-        									[1.9.13,)
+        									[1.9.17,)
         								</versionRange>
         								<goals>
         									<goal>
